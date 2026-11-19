@@ -1,0 +1,73 @@
+--- script3.js	2026-11-19 14:03:12.390321407 +0000
++++ new.js	2026-11-19 14:11:26.032692001 +0000
+@@ -96,7 +96,7 @@
+           inclut: []
+         },
+         signature: {
+-          nom: "La Table du Chef", prix: 105, min: 10, surPlace: "Chef et service, vins et champagne inclus",
++          nom: "La Table du Chef", prix: 130, min: 10, surPlace: "Tout compris : chef, service, vins, champagne et vaisselle",
+           intro: "Un dîner ou un déjeuner d’exception pour un petit comité, chez vous ou dans vos locaux, présenté par le chef.",
+           menu: [
+             ["Amuse-bouches", "Quatre amuse-bouches, servis comme de petites entrées"],
+@@ -104,9 +104,9 @@
+             ["Plat", "Filet de bœuf de Salers et travers de porc confit, ou cabillaud skrei rôti sur peau, garnitures de saison"],
+             ["Dessert", "Le dessert du moment"]
+           ],
+-          inclus: "chef et service, champagne à l’apéritif, vins choisis pour le menu, eaux",
+-          nonInclus: "vaisselle (en option)",
+-          inclut: ["boissons"]
++          inclus: "chef et service, champagne à l’apéritif, vins choisis pour le menu, eaux, vaisselle complète",
++          nonInclus: "",
++          inclut: ["boissons", "vaisselle"]
+         }
+       }
+     },
+@@ -162,11 +162,11 @@
+     { id: "serveurs",  type: "quantite",   label: "Serveurs supplémentaires", detail: "250 € la vacation de 6 heures", prix: 250, max: 10, seulement: ["mariage", "reception"] },   // pas proposé pour le brunch du lendemain
+     { id: "planner",   type: "pourcentage", label: "Wedding planner", detail: "Coordination complète de votre mariage : choix des prestataires, planning, présence le jour J. 10 % du devis", taux: 0.10, defaut: false, seulement: ["mariage"] },   // taux appliqué au total du devis
+     { id: "villa",     type: "forfait",    label: "Location de la villa Montgolfière", detail: "Le repas chez nous, à la villa Montgolfière, jusqu’à 20 convives", prix: 500, defaut: false, seulement: ["reception"], maxConvives: 20 },
+-    { id: "four",      type: "forfait",    label: "Four mobile", detail: "Pour cuire et réchauffer sur place", prix: 95, defaut: false, masquerAvec: "villa",
++    { id: "four",      type: "forfait",    label: "Four mobile", detail: "Pour cuire et réchauffer sur place", prix: 95, defaut: false, masquerAvec: "villa", offertSous: 20,
+       obligatoireSur: ["mariage"], obligatoireFormules: ["servie", "signature"], parConvives: 40, unite: "four" },   // obligatoire en mariage et sur toutes les formules servie et Signature : 1 four minimum, +1 au-delà de 40, 80, 120… convives
+     { id: "livraison", type: "forfait",    label: "Livraison longue distance", detail: "Pour un lieu à plus de 50 km de Bordeaux", prix: 150, defaut: false },
+     { id: "km",        type: "km",         label: "Déplacement", detail: "0,45 € par kilomètre au-delà de 30 km de Bordeaux", prixKm: 0.45, franchise: 30 },
+-    { id: "camion",    type: "jours",      label: "Camion frigorifique", detail: "Inclus dans chaque prestation pour garantir la chaîne du froid. Livré et récupéré sur place", prix: 350, joursMax: 3, inutileAvec: "villa",
++    { id: "camion",    type: "jours",      label: "Camion frigorifique", detail: "Garantit la chaîne du froid jusqu’au service. Livré et récupéré sur place. Offert en dessous de 20 convives", prix: 350, joursMax: 3, inutileAvec: "villa", offertSous: 20,
+       optionnelPour: ["brunch.livree", "reception.essentiel"] }   // pas de camion à la villa ; facultatif pour Le Brunch posé et Le Buffet Essentiel
+   ],
+ 
+@@ -323,7 +323,8 @@
+   const montants = {};
+   for (const o of OPTS) {
+     if (o.type === "pourcentage") continue;   // calculé après les autres lignes
+-    const inclus = f.inclut.includes(o.id);
++    const offert = !!(o.offertSous && n < o.offertSous);   // four et camion offerts pour les petits comités
++    const inclus = f.inclut.includes(o.id) || offert;
+     const v = s.opt[o.id];
+     let montant = 0, detail = "";
+     if (o.type === "parConvive") {
+@@ -345,7 +346,7 @@
+     const dep = o.inutileAvec || o.masquerAvec;
+     const remplace = !!(dep && estActif(dep));
+     const actif = dispo && !remplace && !inclus && (oblig || (o.type === "jours" && (!facultatif || !!s.opt[o.id + "On"])) || (typeof v === "boolean" ? v : v > 0)) && montant > 0;
+-    montants[o.id] = { montant, inclus, actif, dispo, remplace, oblig, detail, facultatif };
++    montants[o.id] = { montant, inclus, actif, dispo, remplace, oblig, detail, facultatif, offert };
+     if (actif) lignes.push({ label: o.label, detail, montant });
+   }
+ 
+@@ -449,6 +450,15 @@
+       if (sub) sub.hidden = m.remplace || (m.facultatif && !m.actif);
+       row.querySelector(".desc").textContent = m.facultatif ? "En option pour cette formule. Livré et récupéré sur place" : o.detail;
+     }
++    if (m.offert && !m.remplace) {
++      $("a-" + o.id).textContent = "Offert";
++      row.querySelector(".desc").textContent = `Offert en dessous de ${o.offertSous} convives.`;
++      if (badge) badge.hidden = true;
++      if (sub) sub.hidden = true;
++      const sw = row.querySelector("[data-switch]"), sp = row.querySelector("[data-spacer]");
++      if (sw) sw.hidden = true;
++      if (sp) sp.hidden = false;
++    }
+     if (m.remplace) $("a-" + o.id).textContent = "Inutile à la villa";
+   }
+ 
