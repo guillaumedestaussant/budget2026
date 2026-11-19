@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Villa Montgolfière</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=DM+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{
+  --bg:#f4efe7; --surface:#fffdf9; --surface-2:#ece5d9; --ink:#2f3838; --muted:#5f6b69;
+  --accent:#a3593f; --accent-ink:#fff; --gold:#d9a441; --line:#dad6cc; --ok:#2f7d5b;
+  --shadow:0 1px 2px rgba(28,35,64,.06),0 6px 20px rgba(28,35,64,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12162a; --surface:#1b2038; --surface-2:#232a47; --ink:#f3ede2; --muted:#a8aec6;
+    --accent:#e2735a; --accent-ink:#12162a; --gold:#e6b65a; --line:#2c3454; --ok:#5cc196;
+    --shadow:0 1px 2px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12162a; --surface:#1b2038; --surface-2:#232a47; --ink:#f3ede2; --muted:#a8aec6;
+  --accent:#e2735a; --accent-ink:#12162a; --gold:#e6b65a; --line:#2c3454; --ok:#5cc196;
+  --shadow:0 1px 2px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Source Serif 4',Georgia,serif;font-weight:600;line-height:1.15;margin:0}
+button,input,textarea,select{font:inherit;color:inherit}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px 104px}
+header.hero{padding:28px 0 18px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.hero h1{font-size:34px;margin-top:6px}
+.hero p{color:var(--muted);margin:6px 0 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.card h2{font-size:22px;margin-bottom:10px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+section.view{display:none}
+section.view.active{display:block}
+
+/* Wi-Fi */
+.wifi{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
+.wifi .qr{background:#fff;padding:10px;border-radius:12px;line-height:0}
+.wifi .qr img,.wifi .qr canvas{width:132px!important;height:132px!important}
+.kv{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin:4px 0}
+.kv b{font-family:ui-monospace,Menlo,monospace;font-size:17px;letter-spacing:.02em;word-break:break-all}
+.btn{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:10px 16px;background:var(--accent);color:var(--accent-ink);font-weight:600;cursor:pointer;text-decoration:none}
+.btn.ghost{background:var(--surface-2);color:var(--ink)}
+.btn.sm{padding:6px 12px;font-size:14px}
+@media (max-width:420px){.wifi{grid-template-columns:1fr}.wifi .qr{justify-self:start}}
+
+/* Infos */
+details{border-top:1px solid var(--line)}
+details:first-of-type{border-top:0}
+summary{list-style:none;cursor:pointer;padding:14px 0;display:flex;gap:12px;align-items:center;font-weight:600}
+summary::-webkit-details-marker{display:none}
+summary .ico{width:36px;height:36px;border-radius:10px;background:var(--surface-2);display:grid;place-items:center;font-size:18px;flex:none}
+summary .sub{display:block;font-weight:400;color:var(--muted);font-size:14px}
+summary::after{content:"+";margin-left:auto;color:var(--muted);font-size:20px}
+details[open] summary::after{content:"–"}
+details .body{padding:0 0 14px 48px;color:var(--ink)}
+details .body p{margin:0 0 8px}
+
+/* Map */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:14px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.range{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);margin-bottom:10px}
+.range input{flex:1;accent-color:var(--accent)}
+#map{height:340px;border-radius:14px;border:1px solid var(--line);z-index:0}
+.places{list-style:none;padding:0;margin:12px 0 0}
+.places li{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line);cursor:pointer}
+.places li:first-child{border-top:0}
+.places .tag{font-size:12px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.places .dist{margin-left:auto;color:var(--muted);font-size:14px;white-space:nowrap}
+.placeholder{font-size:11px;background:var(--surface-2);border-radius:6px;padding:1px 6px;color:var(--muted);margin-left:6px}
+
+/* Chat */
+.chat{display:flex;flex-direction:column;gap:10px;min-height:280px;max-height:52vh;overflow-y:auto;padding:4px 2px}
+.msg{max-width:85%;padding:10px 14px;border-radius:16px;white-space:pre-line}
+.msg.bot{background:var(--surface-2);border-bottom-left-radius:4px;align-self:flex-start}
+.msg.me{background:var(--ink);color:var(--bg);border-bottom-right-radius:4px;align-self:flex-end}
+.msg .btn{margin-top:8px}
+.suggest{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.composer{display:flex;gap:8px;margin-top:8px}
+.composer input{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:10px 16px}
+.icon-btn{width:44px;height:44px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;background:var(--surface-2);font-size:18px;flex:none}
+.icon-btn.primary{background:var(--accent);color:var(--accent-ink)}
+.icon-btn.rec{background:var(--accent);color:var(--accent-ink);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.6}}
+
+/* Form */
+label{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
+input[type=text],textarea,select{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px}
+textarea{min-height:110px;resize:vertical}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 6px;cursor:pointer;font-size:14px}
+.seg button[aria-pressed="true"]{border-color:var(--accent);background:var(--surface-2);font-weight:600}
+.stars{display:flex;gap:4px}
+.stars button{border:0;background:none;font-size:30px;cursor:pointer;color:var(--line);padding:0 2px}
+.stars button.on{color:var(--gold)}
+.notice{background:var(--surface-2);border-radius:12px;padding:12px 14px;margin-top:14px}
+
+/* Tabs */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:center;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:10}
+nav.tabs .in{display:grid;grid-template-columns:repeat(4,1fr);max-width:720px;width:100%}
+nav.tabs button{border:0;background:none;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--muted);cursor:pointer}
+nav.tabs button span{font-size:20px}
+nav.tabs button[aria-selected="true"]{color:var(--accent);font-weight:600}
+.theme-toggle{position:absolute;top:16px;right:16px}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap" style="position:relative">
+  <button class="icon-btn theme-toggle" id="themeBtn" aria-label="Changer de thème">◐</button>
+  <header class="hero">
+    <div class="eyebrow" id="brandLine"></div>
+    <h1 id="hotelName"></h1>
+    <p id="welcome"></p>
+  </header>
+
+  <!-- ACCUEIL -->
+  <section class="view active" id="v-home">
+    <div class="card">
+      <h2>Wi-Fi</h2>
+      <div class="wifi">
+        <div>
+          <div class="kv"><span class="muted small">Réseau</span> <b id="ssid"></b></div>
+          <div class="kv"><span class="muted small">Mot de passe</span> <b id="wpass"></b></div>
+          <p class="muted small" style="margin:10px 0">Scannez le QR code avec l'appareil photo de votre téléphone pour vous connecter directement.</p>
+          <button class="btn sm" id="copyPass">Copier le mot de passe</button>
+        </div>
+        <div class="qr" id="qr" aria-label="QR code de connexion Wi-Fi"></div>
+      </div>
+    </div>
+    <div class="card" id="infos"><h2>Infos pratiques</h2></div>
+    <div class="card">
+      <h2>Besoin de nous ?</h2>
+      <p class="muted" style="margin:0 0 12px">L'équipe est joignable à tout moment.</p>
+      <a class="btn" id="callBtn">Appeler la réception</a>
+    </div>
+  </section>
+
+  <!-- CARTE -->
+  <section class="view" id="v-map">
+    <div class="card">
+      <h2>Nos bonnes adresses</h2>
+      <div class="chips" id="chips"></div>
+      <div class="range"><span>Distance max</span><input type="range" id="dist" min="0.5" max="5" step="0.5" value="5"><b id="distVal"></b></div>
+      <div id="map"></div>
+      <ul class="places" id="placeList"></ul>
+    </div>
+  </section>
+
+  <!-- ASSISTANT -->
+  <section class="view" id="v-chat">
+    <div class="card">
+      <h2>Une question ?</h2>
+      <p class="muted small" style="margin:0">Notre assistant connaît la maison et nos adresses préférées. Écrivez ou parlez.</p>
+      <div class="suggest" id="suggest"></div>
+      <div class="chat" id="chat" aria-live="polite"></div>
+      <form class="composer" id="composer">
+        <button type="button" class="icon-btn" id="micBtn" aria-label="Poser la question à voix haute">🎙</button>
+        <input id="q" autocomplete="off" placeholder="Où louer un vélo à proximité ?">
+        <button class="icon-btn primary" aria-label="Envoyer">➤</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- LIVRE D'OR -->
+  <section class="view" id="v-book">
+    <div class="card">
+      <h2>Votre avis compte</h2>
+      <p class="muted small" style="margin:0">Un souci pendant votre séjour ? Dites-le-nous, on le règle tout de suite. Ou laissez simplement un petit mot.</p>
+      <form id="fb">
+        <label>C'est plutôt…</label>
+        <div class="seg" id="kind">
+          <button type="button" data-v="souci" aria-pressed="false">🔧 Un souci</button>
+          <button type="button" data-v="idee" aria-pressed="false">💡 Une idée</button>
+          <button type="button" data-v="mot" aria-pressed="true">💌 Un mot doux</button>
+        </div>
+        <label>Votre séjour</label>
+        <div class="stars" id="stars"></div>
+        <label for="room">Chambre (facultatif)</label>
+        <input type="text" id="room" placeholder="ex. Suite Benarès">
+        <label for="msg">Message</label>
+        <textarea id="msg" required placeholder="Racontez-nous…"></textarea>
+        <label for="name">Prénom (facultatif)</label>
+        <input type="text" id="name">
+        <div style="margin-top:16px"><button class="btn">Envoyer</button></div>
+      </form>
+      <div id="fbDone" hidden></div>
+    </div>
+  </section>
+</div>
+
+<nav class="tabs" role="tablist"><div class="in">
+  <button role="tab" data-v="home" aria-selected="true"><span>🏠</span>Accueil</button>
+  <button role="tab" data-v="map" aria-selected="false"><span>🗺</span>Adresses</button>
+  <button role="tab" data-v="chat" aria-selected="false"><span>💬</span>Assistant</button>
+  <button role="tab" data-v="book" aria-selected="false"><span>✍️</span>Livre d'or</button>
+</div></nav>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* =====================================================================
+   CONFIGURATION — tout ce qui est propre à l'hôtel se règle ici.
+   Les valeurs marquées EXEMPLE sont à remplacer par les vraies.
+   ===================================================================== */
+const CONFIG = {
+  brand: "Gang of Bordeaux · Maison d'hôtes",
+  name: "Villa Montgolfière",
+  welcome: "Bienvenue dans notre hôtel particulier de 1897. Wi-Fi, piscine, bonnes adresses : tout est ici.",
+  phone: "+33637526722",
+  email: "contact@gangofbordeaux.com",
+  googleReviewUrl: "",                   // lien « laisser un avis Google » (à ajouter)
+  location: { lat: 44.8478, lng: -0.5927 }, // rue Hériard Dubreuil (milieu de rue, à affiner)
+  wifi: { ssid: "VillaMontgolfiere", password: "Montgolfiere1897", security: "WPA" }, // EXEMPLE : à remplacer
+  assistantEndpoint: "",   // URL d'un petit serveur qui appelle l'API d'IA. Vide = mode démo.
+  feedbackEndpoint: "",    // URL qui reçoit le formulaire en JSON (Formspree, Make, Zapier…). Vide = e-mail.
+  infos: [ // Horaires = EXEMPLES à confirmer
+    { id:"breakfast", icon:"☕", title:"Petit-déjeuner", sub:"8h – 10h30 · EXEMPLE",
+      body:"Servi dans la salle à manger ou au jardin quand il fait beau. Produits locaux et de saison, préparés par le chef. Prévenez-nous la veille de vos allergies ou envies.",
+      keys:["petit dejeuner","petit-dejeuner","breakfast","matin","viennoiserie","allergie"] },
+    { id:"pool", icon:"🏊", title:"Piscine & jardin", sub:"Ouverte en saison · horaires EXEMPLE 9h – 20h",
+      body:"La grande piscine est ouverte en saison. Serviettes de piscine à demander à l'accueil. Pas de verre autour du bassin, et les enfants restent sous la surveillance de leurs parents. Le jardin est accessible toute l'année.",
+      keys:["piscine","nager","baignade","jardin","transat","serviette","spa","detente"] },
+    { id:"heating", icon:"🌡", title:"Clim, chauffage & confort", sub:"Climatisation dans Benarès, Cinque Terre, Portimao",
+      body:"Les suites Benarès, Cinque Terre et Portimao sont climatisées : télécommande dans la suite. Nankin et Adaman ont un ventilateur. Fermez les fenêtres pour que la clim soit efficace. Chaque suite a une machine Nespresso, une bouilloire et un minibar.",
+      keys:["chauffage","chaud","froid","clim","climatisation","ventilateur","temperature","radiateur","nespresso","cafe","bouilloire","minibar","the"] },
+    { id:"table", icon:"🍽", title:"Table d'hôtes & chef", sub:"Dîner, accords mets-vins, cours de cuisine",
+      body:"Le chef David Sabatier propose une table d'hôtes avec menus locaux et accords mets-vins, ainsi que des cours de cuisine de 2h30 (2 à 4 personnes). Réservez au moins la veille auprès de nous.",
+      keys:["table d'hotes","chef","diner ici","cours de cuisine","atelier","degustation","accord","mets-vins","manger sur place"] },
+    { id:"arrival", icon:"🔑", title:"Arrivée & départ", sub:"Horaires EXEMPLE : arrivée dès 16h, départ avant 11h",
+      body:"Départ tardif possible selon les disponibilités : demandez-nous la veille. Nous pouvons garder vos bagages après le départ.",
+      keys:["check-out","checkout","check-in","depart","arrivee","cle","bagage","bagages","late"] },
+    { id:"parking", icon:"🚋", title:"Venir & se déplacer", sub:"Hypercentre à 10 min à pied",
+      body:"La villa est à 10 minutes à pied de l'hypercentre, au calme. Tram et bus à proximité. Pour la voiture, demandez-nous les options de stationnement du quartier.",
+      keys:["parking","garer","voiture","tram","bus","transport","gare","aeroport","taxi"] },
+  ],
+  categories: [
+    { id:"resto", label:"🍽 Manger" }, { id:"bar", label:"🍷 Boire un verre" },
+    { id:"marche", label:"🧺 Marchés" }, { id:"balade", label:"🚶 Balades" },
+    { id:"culture", label:"🏛 Culture" }, { id:"pratique", label:"🚲 Pratique" },
+  ],
+  // Les lieux marqués example:true sont à remplacer par vos vraies recommandations.
+  places: [
+    { name:"Table d'hôtes de la Villa", cat:"resto", lat:44.8478, lng:-0.5927,
+      note:"Dîner du chef à la maison, menus locaux et accords mets-vins. Sur réservation la veille.", tags:["dimanche","soir","diner","chef","ici"] },
+    { name:"Votre bistrot du dimanche soir", cat:"resto", lat:44.8462, lng:-0.5868, example:true,
+      note:"Ouvert 7j/7, y compris le dimanche soir. Cuisine du Sud-Ouest.", tags:["dimanche","soir","ouvert dimanche"] },
+    { name:"Votre table bistronomique", cat:"resto", lat:44.8440, lng:-0.5800, example:true,
+      note:"Pour une belle soirée. Réservez, on peut le faire pour vous.", tags:["diner","romantique","reserver","soir"] },
+    { name:"Votre bar à vins préféré", cat:"bar", lat:44.8425, lng:-0.5765, example:true,
+      note:"Large choix de vins de la région au verre.", tags:["vin","apero","soir"] },
+    { name:"Marché des Capucins", cat:"marche", lat:44.8306, lng:-0.5678,
+      note:"Le « ventre de Bordeaux ». Huîtres et vin blanc le samedi matin. Fermé le lundi.", tags:["huitres","matin","samedi"] },
+    { name:"Marché des Chartrons", cat:"marche", lat:44.8540, lng:-0.5665,
+      note:"Le dimanche matin sur les quais. Producteurs et petite restauration.", tags:["dimanche","matin","quais"] },
+    { name:"Jardin Public", cat:"balade", lat:44.8490, lng:-0.5770,
+      note:"Grand jardin à l'anglaise, parfait avec des enfants.", tags:["enfants","parc","jardin"] },
+    { name:"Miroir d'eau & place de la Bourse", cat:"balade", lat:44.8417, lng:-0.5697,
+      note:"Incontournable, surtout au coucher du soleil.", tags:["photo","coucher de soleil","quais"] },
+    { name:"Les quais à vélo", cat:"balade", lat:44.8470, lng:-0.5680,
+      note:"Des kilomètres de promenade le long de la Garonne, du pont de pierre au pont Chaban-Delmas.", tags:["velo","garonne","courir"] },
+    { name:"Cathédrale Saint-André", cat:"culture", lat:44.8378, lng:-0.5777,
+      note:"Montez en haut de la tour Pey-Berland pour la vue.", tags:["vue","monument","pluie"] },
+    { name:"Musée d'Aquitaine", cat:"culture", lat:44.8350, lng:-0.5740,
+      note:"L'histoire de Bordeaux de la préhistoire à aujourd'hui. Idéal s'il pleut.", tags:["musee","pluie","histoire"] },
+    { name:"La Cité du Vin", cat:"culture", lat:44.8625, lng:-0.5503,
+      note:"Musée immersif sur le vin. Dégustation au belvédère incluse.", tags:["vin","musee","pluie"] },
+    { name:"Station Le Vélo (vélos en libre-service)", cat:"pratique", lat:44.8470, lng:-0.5900, example:true,
+      note:"Vélos en libre-service TBM. Indiquez ici la station la plus proche, ou votre loueur partenaire.", tags:["velo","louer","location","bicyclette"] },
+    { name:"Votre pharmacie la plus proche", cat:"pratique", lat:44.8485, lng:-0.5895, example:true,
+      note:"Pharmacie la plus proche. Pharmacie de garde : composez le 3237.", tags:["pharmacie","medicament","sante","malade"] },
+  ],
+};
+
+/* ===================== Utilitaires ===================== */
+const $ = s => document.querySelector(s);
+const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function km(a,b){const R=6371,t=x=>x*Math.PI/180,dLa=t(b.lat-a.lat),dLo=t(b.lng-a.lng);
+  const h=Math.sin(dLa/2)**2+Math.cos(t(a.lat))*Math.cos(t(b.lat))*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(h));}
+const fmtDist = d => d<0.05 ? "À la villa" : d<1 ? `${Math.round(d*1000/10)*10} m · ${Math.max(1,Math.round(d*12))} min à pied` : `${d.toFixed(1).replace(".",",")} km`;
+function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),1800);}
+const store = { get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}}, set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}} };
+CONFIG.places.forEach(p=>p.d=km(CONFIG.location,p));
+
+/* ===================== Thème ===================== */
+const applyTheme=t=>{ if(t) document.documentElement.dataset.theme=t; else delete document.documentElement.dataset.theme; };
+applyTheme(store.get("theme",null));
+$("#themeBtn").onclick=()=>{const dark=matchMedia("(prefers-color-scheme: dark)").matches;
+  const cur=document.documentElement.dataset.theme||(dark?"dark":"light");const n=cur==="dark"?"light":"dark";applyTheme(n);store.set("theme",n);};
+
+/* ===================== Accueil ===================== */
+$("#brandLine").textContent=CONFIG.brand; $("#hotelName").textContent=CONFIG.name; $("#welcome").textContent=CONFIG.welcome;
+$("#ssid").textContent=CONFIG.wifi.ssid; $("#wpass").textContent=CONFIG.wifi.password;
+$("#callBtn").href="tel:"+CONFIG.phone;
+const wEsc=s=>s.replace(/([\\;,:"])/g,"\\$1");
+try{ new QRCode($("#qr"),{text:`WIFI:T:${CONFIG.wifi.security};S:${wEsc(CONFIG.wifi.ssid)};P:${wEsc(CONFIG.wifi.password)};;`,width:264,height:264,correctLevel:QRCode.CorrectLevel.M}); }
+catch(e){ $("#qr").textContent="QR indisponible"; }
+$("#copyPass").onclick=async()=>{try{await navigator.clipboard.writeText(CONFIG.wifi.password);toast("Mot de passe copié");}catch{toast(CONFIG.wifi.password);}};
+$("#infos").insertAdjacentHTML("beforeend",CONFIG.infos.map(i=>`<details id="info-${i.id}"><summary><span class="ico">${i.icon}</span><span>${esc(i.title)}<span class="sub">${esc(i.sub)}</span></span></summary><div class="body"><p>${esc(i.body)}</p></div></details>`).join(""));
+
+/* ===================== Onglets ===================== */
+let mapReady=false;
+function show(v){document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("active",s.id==="v-"+v));
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
+  scrollTo({top:0}); if(v==="map") initMap(); store.set("tab",v);}
+document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>show(b.dataset.v));
+
+/* ===================== Carte ===================== */
+let map, markers={}, activeCats=new Set();
+$("#chips").innerHTML=CONFIG.categories.map(c=>`<button class="chip" data-c="${c.id}" aria-pressed="false">${c.label}</button>`).join("");
+$("#chips").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;const c=b.dataset.c;
+  activeCats.has(c)?activeCats.delete(c):activeCats.add(c);b.setAttribute("aria-pressed",activeCats.has(c));renderPlaces();};
+$("#dist").oninput=renderPlaces;
+const catLabel=id=>(CONFIG.categories.find(c=>c.id===id)||{label:id}).label.replace(/^\S+\s/,"");
+function initMap(){
+  if(mapReady){setTimeout(()=>map.invalidateSize(),50);return;}
+  if(!window.L){$("#map").innerHTML='<p class="muted" style="padding:16px">Carte indisponible hors connexion.</p>';renderPlaces();return;}
+  mapReady=true;
+  map=L.map("map",{scrollWheelZoom:false}).setView([CONFIG.location.lat,CONFIG.location.lng],14);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);
+  L.marker([CONFIG.location.lat,CONFIG.location.lng],{icon:L.divIcon({className:"",html:'<div style="font-size:28px;line-height:1">🎈</div>',iconSize:[28,28],iconAnchor:[14,28]})})
+    .addTo(map).bindPopup(`<b>${esc(CONFIG.name)}</b><br>Vous êtes ici`);
+  CONFIG.places.forEach((p,i)=>{markers[i]=L.circleMarker([p.lat,p.lng],{radius:8,weight:2,color:"#fff",fillColor:"#a3593f",fillOpacity:1})
+    .bindPopup(`<b>${esc(p.name)}</b><br>${esc(p.note)}<br><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking">Itinéraire →</a>`);});
+  renderPlaces();
+}
+function renderPlaces(){
+  const max=+$("#dist").value; $("#distVal").textContent=max>=5?"tout":max.toString().replace(".",",")+" km";
+  const list=CONFIG.places.map((p,i)=>({...p,i})).filter(p=>(!activeCats.size||activeCats.has(p.cat))&&(max>=5||p.d<=max)).sort((a,b)=>a.d-b.d);
+  if(map){Object.values(markers).forEach(m=>m.remove());list.forEach(p=>markers[p.i].addTo(map));}
+  $("#placeList").innerHTML=list.length?list.map(p=>`<li data-i="${p.i}"><div><div class="tag">${esc(catLabel(p.cat))}</div><b>${esc(p.name)}</b>${p.example?'<span class="placeholder">exemple</span>':""}<div class="muted small">${esc(p.note)}</div></div><div class="dist">${fmtDist(p.d)}</div></li>`).join("")
+    :'<li class="muted">Aucune adresse avec ces filtres. Élargissez la distance.</li>';
+}
+$("#placeList").onclick=e=>{const li=e.target.closest("li[data-i]");if(!li||!map)return;const p=CONFIG.places[li.dataset.i];
+  map.setView([p.lat,p.lng],16);markers[li.dataset.i].openPopup();$("#map").scrollIntoView({behavior:"smooth",block:"center"});};
+function focusPlace(i){show("map");setTimeout(()=>{const p=CONFIG.places[i];if(map){map.setView([p.lat,p.lng],16);markers[i].addTo(map).openPopup();}},120);}
+
+/* ===================== Assistant ===================== */
+const chat=$("#chat"), history=[];
+const SUGG=["Où louer un vélo à proximité ?","Un restaurant ouvert le dimanche soir ?","À quelle heure est le petit-déjeuner ?","Comment marche la clim ?","Que faire s'il pleut ?","On peut dîner à la villa ?"];
+$("#suggest").innerHTML=SUGG.map(s=>`<button class="chip" type="button">${esc(s)}</button>`).join("");
+$("#suggest").onclick=e=>{const b=e.target.closest(".chip");if(b)ask(b.textContent);};
+function addMsg(html,who){const d=document.createElement("div");d.className="msg "+who;d.innerHTML=html;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d;}
+addMsg(`Bonjour ! Je suis l'assistant de la ${esc(CONFIG.name)}. Wi-Fi, petit-déjeuner, piscine, bonnes adresses : demandez-moi ce que vous voulez.`,"bot");
+
+const CAT_WORDS={resto:["restaurant","resto","manger","diner","dejeuner","table","cuisine","faim"],bar:["bar","verre","boire","apero","cocktail","vin"],
+  marche:["marches","le marche","un marche","marche des","producteur","producteurs","huitre","huitres"],balade:["balade","promener","promenade","marcher","parc","jardin","courir","footing"],
+  culture:["musee","visite","visiter","culture","monument","pluie","pleut","expo"],pratique:["velo","louer","location","pharmacie","medicament"]};
+function localAnswer(q){
+  const n=norm(q), words=n.split(/[^a-z0-9-]+/).filter(Boolean);
+  // 1. Wi-Fi
+  if(/wi-?fi|internet|reseau|connexion|mot de passe/.test(n))
+    return {text:`Réseau : ${CONFIG.wifi.ssid}\nMot de passe : ${CONFIG.wifi.password}\nLe plus simple : scannez le QR code de l'onglet Accueil.`};
+  // 2. Infos de la maison
+  let best=null,bs=0; CONFIG.infos.forEach(i=>{const s=i.keys.filter(k=>n.includes(norm(k))).length;if(s>bs){bs=s;best=i;}});
+  // 3. Bonnes adresses
+  const cats=Object.entries(CAT_WORDS).filter(([,ws])=>ws.some(w=>words.includes(w)||n.includes(w))).map(([c])=>c);
+  if(best&&!cats.length) return {text:`${best.icon} ${best.title} — ${best.sub}\n${best.body}`};
+  if(cats.length){
+    const wantsSunday=n.includes("dimanche"), wantsEvening=/soir|diner|nuit/.test(n);
+    let pool=CONFIG.places.map((p,i)=>({...p,i})).filter(p=>cats.includes(p.cat)||p.tags.some(t=>words.includes(norm(t))));
+    pool.forEach(p=>{p.score=(cats.includes(p.cat)?2:0)+(wantsSunday&&p.tags.includes("dimanche")?3:0)+(wantsEvening&&p.tags.includes("soir")?1:0)-p.d/3;});
+    pool=pool.sort((a,b)=>b.score-a.score).slice(0,3);
+    if(pool.length) return {text:"Voici ce que nous vous conseillons :", places:pool};
+  }
+  if(best) return {text:`${best.icon} ${best.title} — ${best.sub}\n${best.body}`};
+  return {text:`Je n'ai pas la réponse à ça. Le plus simple : appelez la réception, on vous aide tout de suite.`, call:true};
+}
+async function remoteAnswer(q){
+  const r=await fetch(CONFIG.assistantEndpoint,{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({question:q,history:history.slice(-10),context:{hotel:CONFIG.name,infos:CONFIG.infos.map(({title,sub,body})=>({title,sub,body})),places:CONFIG.places.map(({name,cat,note,tags,d})=>({name,cat,note,tags,distance_km:+d.toFixed(2)}))}})});
+  if(!r.ok) throw new Error(r.status); const j=await r.json(); return {text:j.reply};
+}
+async function ask(q){
+  q=q.trim(); if(!q) return; addMsg(esc(q),"me"); $("#q").value="";
+  const pending=addMsg("…","bot"); let a;
+  try{ a=CONFIG.assistantEndpoint?await remoteAnswer(q):localAnswer(q); }catch{ a=localAnswer(q); }
+  if(!CONFIG.assistantEndpoint) await new Promise(r=>setTimeout(r,350));
+  history.push({role:"user",content:q},{role:"assistant",content:a.text});
+  let html=esc(a.text);
+  if(a.places) html+=a.places.map(p=>`\n\n<b>${esc(p.name)}</b> · ${fmtDist(p.d)}\n${esc(p.note)}\n<button class="btn sm ghost" data-i="${p.i}">Voir sur la carte</button>`).join("");
+  if(a.call) html+=`\n<a class="btn sm" href="tel:${esc(CONFIG.phone)}">Appeler la réception</a>`;
+  pending.innerHTML=html; chat.scrollTop=chat.scrollHeight;
+  if(voiceReply&&"speechSynthesis" in window){const u=new SpeechSynthesisUtterance(a.text+(a.places?" "+a.places.map(p=>p.name).join(", "):""));u.lang="fr-FR";speechSynthesis.speak(u);}
+  voiceReply=false;
+}
+chat.onclick=e=>{const b=e.target.closest("button[data-i]");if(b)focusPlace(+b.dataset.i);};
+$("#composer").onsubmit=e=>{e.preventDefault();ask($("#q").value);};
+// Voix
+let voiceReply=false; const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SR) $("#micBtn").style.display="none";
+else{ const rec=new SR(); rec.lang="fr-FR"; rec.interimResults=false;
+  rec.onresult=e=>{voiceReply=true;ask(e.results[0][0].transcript);};
+  rec.onend=()=>$("#micBtn").classList.remove("rec");
+  rec.onerror=()=>{$("#micBtn").classList.remove("rec");toast("Micro indisponible");};
+  $("#micBtn").onclick=()=>{try{rec.start();$("#micBtn").classList.add("rec");}catch{}}; }
+
+/* ===================== Livre d'or ===================== */
+let kind="mot", rating=0;
+$("#kind").onclick=e=>{const b=e.target.closest("button");if(!b)return;kind=b.dataset.v;
+  $("#kind").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  $("#msg").placeholder=kind==="souci"?"Que se passe-t-il ? On s'en occupe au plus vite.":kind==="idee"?"Votre idée pour améliorer la maison…":"Racontez-nous…";};
+$("#stars").innerHTML=[1,2,3,4,5].map(i=>`<button type="button" data-s="${i}" aria-label="${i} étoile${i>1?"s":""}">★</button>`).join("");
+$("#stars").onclick=e=>{const b=e.target.closest("button");if(!b)return;rating=+b.dataset.s;
+  $("#stars").querySelectorAll("button").forEach(x=>x.classList.toggle("on",+x.dataset.s<=rating));};
+$("#fb").onsubmit=async e=>{
+  e.preventDefault();
+  const data={type:kind,note:rating||null,chambre:$("#room").value.trim(),message:$("#msg").value.trim(),prenom:$("#name").value.trim(),date:new Date().toISOString(),hotel:CONFIG.name};
+  if(!data.message) return;
+  let sent=false;
+  if(CONFIG.feedbackEndpoint){try{const r=await fetch(CONFIG.feedbackEndpoint,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(data)});sent=r.ok;}catch{}}
+  const saved=store.get("feedback",[]);saved.push(data);store.set("feedback",saved);
+  if(!sent){const sub=encodeURIComponent(`[${CONFIG.name}] ${kind==="souci"?"Souci":kind==="idee"?"Idée":"Mot doux"}${data.chambre?" – "+data.chambre:""}`);
+    const body=encodeURIComponent(`${data.message}\n\nNote : ${data.note??"-"}/5\nChambre : ${data.chambre||"-"}\nPrénom : ${data.prenom||"-"}`);
+    location.href=`mailto:${CONFIG.email}?subject=${sub}&body=${body}`;}
+  $("#fb").hidden=true; const done=$("#fbDone"); done.hidden=false;
+  done.innerHTML=kind==="souci"
+    ? `<div class="notice"><b>Merci, c'est bien noté.</b><br>Nous revenons vers vous très vite pour régler ça. Si c'est urgent :<div style="margin-top:10px"><a class="btn sm" href="tel:${esc(CONFIG.phone)}">Appeler la réception</a></div></div>`
+    : `<div class="notice"><b>Merci ${esc(data.prenom)} !</b><br>Votre message fait vraiment plaisir à toute l'équipe.${CONFIG.googleReviewUrl?`<div style="margin-top:10px"><a class="btn sm ghost" target="_blank" rel="noopener" href="${esc(CONFIG.googleReviewUrl)}">Partager aussi sur Google</a></div>`:""}</div>`;
+};
+
+/* Restaure l'onglet ou ouvre celui de l'URL (#map, #chat, #book) */
+const start=(location.hash||"").slice(1)||store.get("tab","home");
+if(["home","map","chat","book"].includes(start)) show(start);
+</script>
+</body>
+</html>
