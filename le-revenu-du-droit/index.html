@@ -278,9 +278,9 @@ footer .legal{border-top:1px solid #333b50;margin-top:36px;padding-top:20px;font
         <label>Votre profession</label>
         <div class="seg" id="simProf"></div>
         <label for="rev">Revenu professionnel net mensuel</label>
-        <div class="range"><input type="range" id="rev" min="2000" max="20000" step="250" value="6000"><output id="revOut"></output></div>
+        <div class="range"><input type="range" id="rev" min="0" max="1" step="1" value="0"><output id="revOut"></output></div>
         <label for="chg">Charges du cabinet qui continuent (loyer, salariés, emprunt)</label>
-        <div class="range"><input type="range" id="chg" min="0" max="15000" step="250" value="2500"><output id="chgOut"></output></div>
+        <div class="range"><input type="range" id="chg" min="0" max="1" step="1" value="0"><output id="chgOut"></output></div>
         <label>Durée de l'arrêt</label>
         <div class="seg" id="simDur" style="grid-template-columns:repeat(4,1fr)"></div>
       </div>
@@ -516,10 +516,15 @@ $("#simProf").innerHTML=CONFIG.professions.map(p=>`<button type="button" data-p=
 $("#simDur").innerHTML=CONFIG.durations.map(d=>`<button type="button" data-d="${d}">${d<365?d+" j":"1 an"}</button>`).join("");
 $("#simProf").onclick=e=>{const b=e.target.closest("button");if(b)setProf(b.dataset.p);};
 $("#simDur").onclick=e=>{const b=e.target.closest("button");if(b){days=+b.dataset.d;calc();}};
-["rev","chg"].forEach(id=>$("#"+id).addEventListener("input",calc));
+// Échelles progressives : fines pour les revenus courants, larges jusqu'à 100 000 €/mois
+const steps=(a,b,s)=>{const r=[];for(let v=a;v<=b;v+=s)r.push(v);return r;};
+const SCALE={rev:[...steps(2000,10000,500),...steps(11000,30000,1000),...steps(32500,100000,2500)],
+             chg:[...steps(0,10000,250),...steps(11000,30000,1000),...steps(32500,50000,2500)]};
+const val=id=>SCALE[id][+$("#"+id).value];
+[["rev",6000],["chg",2500]].forEach(([id,v])=>{const el=$("#"+id);el.max=SCALE[id].length-1;el.value=SCALE[id].indexOf(v);el.addEventListener("input",calc);});
 function setProf(id){prof=id;calc();}
 function calc(){
-  const p=CONFIG.professions.find(x=>x.id===prof), rev=+$("#rev").value, chg=+$("#chg").value;
+  const p=CONFIG.professions.find(x=>x.id===prof), rev=val("rev"), chg=val("chg");
   document.querySelectorAll("#simProf button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.p===prof));
   document.querySelectorAll("#simDur button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.d===days));
   $("#revOut").textContent=eur(rev); $("#chgOut").textContent=eur(chg);
