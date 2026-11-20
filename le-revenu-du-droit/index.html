@@ -417,10 +417,10 @@ footer .legal{border-top:1px solid #333b50;margin-top:36px;padding-top:20px;font
       </div>
       <div>
         <h4>Votre métier</h4>
-        <p><a href="#metiers">Prévoyance avocat</a></p>
-        <p><a href="#metiers">Prévoyance notaire</a></p>
-        <p><a href="#metiers">Prévoyance commissaire de justice</a></p>
-        <p><a href="#metiers">Prévoyance expert-comptable</a></p>
+        <p><a href="prevoyance-avocat.html">Prévoyance avocat</a></p>
+        <p><a href="prevoyance-notaire.html">Prévoyance notaire</a></p>
+        <p><a href="prevoyance-commissaire-de-justice.html">Prévoyance commissaire de justice</a></p>
+        <p><a href="prevoyance-expert-comptable.html">Prévoyance expert-comptable</a></p>
       </div>
       <div>
         <h4>Contact</h4>
@@ -503,7 +503,8 @@ const eur=n=>new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR",maxi
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 /* cartes métiers */
-$("#profCards").innerHTML=CONFIG.professions.map(p=>`<article class="prof"><div class="tag">${esc(p.tag)}</div><h3>Prévoyance ${esc(p.label.toLowerCase())}</h3><p>${esc(p.text)}</p><div class="fact">${esc(p.fact)}</div><button data-p="${p.id}">Simuler mon cas →</button></article>`).join("");
+const SLUG={avocat:"prevoyance-avocat",notaire:"prevoyance-notaire",cj:"prevoyance-commissaire-de-justice",ec:"prevoyance-expert-comptable"};
+$("#profCards").innerHTML=CONFIG.professions.map(p=>`<article class="prof"><div class="tag">${esc(p.tag)}</div><h3>Prévoyance ${esc(p.label.toLowerCase())}</h3><p>${esc(p.text)}</p><div class="fact">${esc(p.fact)}</div><button data-p="${p.id}">Simuler mon cas →</button><a href="${SLUG[p.id]}.html" style="margin-top:8px;font-size:15px;color:var(--muted)">Lire le guide complet</a></article>`).join("");
 $("#profCards").addEventListener("click",e=>{const b=e.target.closest("button[data-p]");if(!b)return;setProf(b.dataset.p);$("#simulateur").scrollIntoView({behavior:"smooth"});});
 
 /* selects des formulaires */
