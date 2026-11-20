@@ -231,9 +231,9 @@ footer .legal{border-top:1px solid #333b50;margin-top:36px;padding-top:20px;font
 <!-- REPERES -->
 <section class="facts" aria-label="Repères 2026">
   <div class="wrap grid">
-    <div><b>3 jours</b><span>sans aucune indemnité au début de chaque arrêt</span></div>
-    <div><b>197 €/jour</b><span>au maximum versés par l'Assurance maladie, quel que soit votre revenu</span></div>
-    <div><b>90 jours</b><span>après quoi votre caisse professionnelle prend le relais, souvent avec un forfait</span></div>
+    <div><b>3 à 15 jours</b><span>sans aucune indemnité au début de chaque arrêt</span></div>
+    <div><b>197 €/jour</b><span>au maximum versés par l'Assurance maladie, quel que soit votre revenu (avocats exclus)</span></div>
+    <div><b>90 jours</b><span>après quoi votre caisse verse un forfait… ou rien du tout pour les notaires et commissaires de justice</span></div>
     <div><b>0 €</b><span>pour les charges du cabinet, qu'aucun régime obligatoire ne couvre</span></div>
   </div>
 </section>
@@ -259,7 +259,7 @@ footer .legal{border-top:1px solid #333b50;margin-top:36px;padding-top:20px;font
     <div class="section-head">
       <div class="eyebrow">Votre métier</div>
       <h2>Chaque profession a sa caisse. Chacune laisse un trou.</h2>
-      <p class="muted">Du 4ᵉ au 90ᵉ jour d'arrêt, l'Assurance maladie verse des indemnités plafonnées. Ensuite, c'est votre caisse professionnelle qui prend le relais, et c'est là que tout se joue.</p>
+      <p class="muted">Pendant les 90 premiers jours, c'est l'Assurance maladie (ou, pour les avocats, le contrat du barreau) qui verse des indemnités plafonnées. Ensuite, tout dépend de votre caisse : un forfait de 90 ou 130 €/jour, ou rien du tout.</p>
     </div>
     <div class="profs" id="profCards"></div>
   </div>
@@ -445,24 +445,35 @@ footer .legal{border-top:1px solid #333b50;margin-top:36px;padding-top:20px;font
    ================================================================== */
 const CONFIG = {
   formEndpoint: "",            // URL qui reçoit les formulaires (Formspree, Make…). Vide = démo.
-  cpamMaxPerDay: 197.51,       // IJ Assurance maladie J4–J90, plafond 3 PASS / 730 (2026, à vérifier)
+  cpamMaxPerDay: 197.51,       // IJ Assurance maladie : 1/730 du revenu, plafond 197,51 €/jour au 1er janvier 2026 (ameli.fr)
+  // Phases d'indemnisation par profession. perDay "cpam" = 1/730 du revenu annuel, plafonné.
+  // Sources vérifiées le 21/11/2026 : ameli.fr, cnbf.fr, cnb.avocat.fr, note LPA du barreau de Versailles,
+  // cprn.fr, guide Cavom, cavec.fr.
   professions: [
-    { id:"avocat", label:"Avocat", tag:"CNBF · LPA", caisse:"la CNBF et la LPA",
-      perDayAfter90: 90, // à vérifier : IJ CNBF / LPA versées du 91e au 1095e jour
-      fact:"≈ 90 €/jour à partir du 91ᵉ jour",
-      text:"Collaborateur ou associé, la CNBF et la LPA versent un forfait identique quel que soit votre chiffre d'affaires. Les frais du cabinet, eux, ne s'arrêtent pas." },
-    { id:"notaire", label:"Notaire", tag:"CPRN", caisse:"la CPRN",
-      perDayAfter90: 0, // à vérifier : pas d'IJ CPRN au-delà de 90 jours
-      fact:"0 € d'indemnité au-delà du 90ᵉ jour",
-      text:"Au-delà de trois mois d'arrêt, la CPRN ne verse plus d'indemnités journalières. L'étude, les collaborateurs et l'emprunt des parts restent à financer." },
-    { id:"cj", label:"Commissaire de justice", tag:"CAVOM", caisse:"la CAVOM",
-      perDayAfter90: null, // à compléter : barème CAVOM à confirmer
-      fact:"Barème CAVOM à étudier au cas par cas",
-      text:"Les actes et les délais de procédure n'attendent pas. Vérifiez ce que la CAVOM verse vraiment en cas d'arrêt long ou d'invalidité." },
-    { id:"ec", label:"Expert-comptable", tag:"CAVEC", caisse:"la CAVEC",
-      perDayAfter90: 130, // à vérifier : IJ CAVEC à partir du 91e jour
-      fact:"≈ 130 €/jour à partir du 91ᵉ jour",
-      text:"Le forfait de la CAVEC ne dépend pas de votre revenu. En pleine période fiscale, un arrêt peut coûter très cher au cabinet." },
+    { id:"avocat", label:"Avocat", tag:"LPA · CNBF",
+      phases:[ {from:1,to:15,perDay:0,label:"franchise du contrat du barreau"},
+               {from:16,to:90,perDay:90,label:"contrat du barreau (LPA, national)"},
+               {from:91,to:1095,perDay:90,label:"CNBF"} ],
+      fact:"90 €/jour, du 16ᵉ jour à 3 ans",
+      text:"Pas d'Assurance maladie pour les avocats : le contrat de votre barreau verse 90 €/jour après 15 jours de franchise, puis la CNBF prend le relais au même forfait. Quel que soit votre chiffre d'affaires." },
+    { id:"notaire", label:"Notaire", tag:"CPRN",
+      phases:[ {from:1,to:3,perDay:0,label:"carence"},
+               {from:4,to:90,perDay:"cpam",label:"Assurance maladie"},
+               {from:91,to:1095,perDay:0,label:"CPRN : aucune indemnité journalière"} ],
+      fact:"0 € d'indemnité journalière après 90 jours",
+      text:"La CPRN ne verse pas d'indemnités journalières : seulement une rente en cas d'invalidité totale et définitive. Après trois mois d'arrêt, l'étude, les collaborateurs et l'emprunt des parts restent à financer." },
+    { id:"cj", label:"Commissaire de justice", tag:"CAVOM",
+      phases:[ {from:1,to:3,perDay:0,label:"carence"},
+               {from:4,to:90,perDay:"cpam",label:"Assurance maladie"},
+               {from:91,to:1095,perDay:0,label:"CAVOM : aucune indemnité journalière"} ],
+      fact:"0 € d'indemnité journalière après 90 jours",
+      text:"La CAVOM ne couvre que l'invalidité d'au moins 66 % et le décès. Un arrêt long, même de plusieurs mois, n'est pas indemnisé au-delà du 90ᵉ jour, alors que les actes et les délais courent." },
+    { id:"ec", label:"Expert-comptable", tag:"CAVEC",
+      phases:[ {from:1,to:3,perDay:0,label:"carence"},
+               {from:4,to:90,perDay:"cpam",label:"Assurance maladie"},
+               {from:91,to:1095,perDay:130,label:"CAVEC"} ],
+      fact:"130 €/jour à partir du 91ᵉ jour",
+      text:"Le forfait de la CAVEC est le même quel que soit votre revenu : 130 €/jour en 2026. En pleine période fiscale, un arrêt peut coûter très cher au cabinet." },
   ],
   durations:[30,90,180,365],
   // Webinaires : jour de la semaine (1 = lundi … 4 = jeudi) et heure. À confirmer avec Laurie.
@@ -512,16 +523,15 @@ function calc(){
   document.querySelectorAll("#simDur button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.d===days));
   $("#revOut").textContent=eur(rev); $("#chgOut").textContent=eur(chg);
   const cpamDay=Math.min(rev*12/730,CONFIG.cpamMaxPerDay);
-  const d1=Math.min(days,3), d2=Math.max(0,Math.min(days,90)-3), d3=Math.max(0,days-90);
-  const after=p.perDayAfter90??0;
-  const paid=d2*cpamDay+d3*after;
+  const rate=ph=>ph.perDay==="cpam"?cpamDay:ph.perDay;
+  let paid=0; p.phases.forEach(ph=>{const n=Math.max(0,Math.min(days,ph.to)-ph.from+1); paid+=n*rate(ph);});
   const need=(rev+chg)*days/30;
   const gap=Math.max(0,need-paid);
   $("#gap").textContent=eur(gap);
   $("#vNeed").textContent=eur(need); $("#vPaid").textContent=eur(paid);
   $("#bNeed").style.width="100%"; $("#bPaid").style.width=(need?Math.min(100,paid/need*100):0)+"%";
-  $("#tl").innerHTML=`<div><b>J1 → J3</b>0 €/jour<br>carence</div><div><b>J4 → J90</b>${eur(cpamDay)}/jour<br>Assurance maladie</div><div><b>J91 et +</b>${p.perDayAfter90==null?"à étudier":eur(after)+"/jour"}<br>${esc(p.caisse)}</div>`;
-  $("#simNote").textContent=(p.perDayAfter90==null?`Le barème de ${p.caisse} n'est pas intégré : au-delà de 90 jours, le calcul ne compte aucun versement. `:"")+"Estimation indicative et non contractuelle, sur la base des barèmes 2026 de l'Assurance maladie et des caisses professionnelles. Indemnités journalières calculées sur 1/730 du revenu annuel, dans la limite du plafond. Seule une étude personnalisée permet d'établir vos besoins réels.";
+  $("#tl").innerHTML=p.phases.map(ph=>`<div><b>J${ph.from} → ${ph.to>=1095?"3 ans":"J"+ph.to}</b>${rate(ph)?eur(rate(ph))+"/jour":"0 €/jour"}<br>${esc(ph.label)}</div>`).join("");
+  $("#simNote").textContent=(prof==="avocat"?"Montants du contrat national LPA ; certains barreaux (Paris notamment) ont des garanties différentes. ":"")+"Estimation indicative et non contractuelle, sur la base des barèmes 2026 de l'Assurance maladie et des caisses professionnelles (montants bruts). Indemnités de l'Assurance maladie calculées sur 1/730 du revenu annuel, dans la limite de 197,51 €/jour. Seule une étude personnalisée permet d'établir vos besoins réels.";
   window._sim={profession:p.label,revenu:rev,charges:chg,jours:days,manque:Math.round(gap)};
 }
 calc();
