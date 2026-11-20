@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Revenu du Droit — Prévoyance des professions du droit et du chiffre</title>
+<meta name="description" content="Avocat, notaire, commissaire de justice, expert-comptable : combien touchez-vous vraiment en cas d'arrêt de travail ? Diagnostic chiffré par une ancienne avocate, courtière indépendante à Bordeaux.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#f7f3ec; --surface:#fffdf9; --ink:#1d2433; --muted:#5b6274; --line:#e4dccd;
+  --wine:#7a2335; --wine-ink:#fff; --gold:#b8893a; --navy:#1d2433; --soft:#efe8db;
+  --ok:#2f6f55; --bad:#b4442f;
+}
+@media (prefers-color-scheme: dark){
+  :root{--paper:#14171f;--surface:#1c202b;--ink:#f1ece2;--muted:#a9afbf;--line:#2c3242;--wine:#c3566a;--soft:#232837;--gold:#d6a756;--ok:#5cb38d;--bad:#e07a62}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.12;margin:0;font-weight:600}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.eyebrow{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--wine);font-weight:600}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:4px;padding:14px 22px;background:var(--wine);color:var(--wine-ink);font-weight:600;font-size:16px;cursor:pointer;text-decoration:none}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.muted{color:var(--muted)}
+section{padding:88px 0}
+.placeholder{background:#fff3c4;color:#6b5200;border-radius:3px;padding:0 4px;font-size:.9em}
+
+/* header */
+header.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px}
+.logo{font-family:Fraunces,serif;font-size:22px;font-weight:700;text-decoration:none;letter-spacing:-.01em}
+.logo span{color:var(--wine)}
+nav.main{display:flex;gap:26px;font-size:15px}
+nav.main a{text-decoration:none;color:var(--muted)}
+nav.main a:hover{color:var(--ink)}
+@media(max-width:860px){nav.main{display:none}}
+
+/* hero */
+.hero{padding:72px 0 64px}
+.hero .grid{display:grid;grid-template-columns:1.25fr .75fr;gap:56px;align-items:center}
+.hero h1{font-size:clamp(38px,5.4vw,62px);letter-spacing:-.02em;margin:14px 0 20px}
+.hero h1 em{font-style:normal;color:var(--wine)}
+.hero p.lead{font-size:20px;color:var(--muted);max-width:560px;margin:0 0 30px}
+.hero .ctas{display:flex;gap:12px;flex-wrap:wrap}
+.hero .proof{display:flex;gap:28px;margin-top:36px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.hero .proof b{display:block;font-family:Fraunces,serif;font-size:24px;color:var(--ink)}
+.portrait{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:28px;box-shadow:0 20px 50px -30px rgba(0,0,0,.35)}
+.avatar{width:96px;height:96px;border-radius:50%;background:var(--wine);color:#fff;display:grid;place-items:center;font-family:Fraunces,serif;font-size:36px;margin-bottom:18px}
+.portrait h3{font-size:24px}
+.portrait ul{padding-left:18px;margin:14px 0 0;color:var(--muted);font-size:15px}
+.portrait li{margin:6px 0}
+@media(max-width:860px){.hero .grid{grid-template-columns:1fr}}
+
+/* professions */
+.profs{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}
+.prof{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:24px;display:flex;flex-direction:column}
+.prof .tag{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+.prof h3{font-size:22px;margin:8px 0 10px}
+.prof p{font-size:15px;color:var(--muted);margin:0 0 16px;flex:1}
+.prof .fact{font-family:Fraunces,serif;font-size:19px;border-top:1px solid var(--line);padding-top:12px}
+.prof button{margin-top:14px;background:none;border:0;color:var(--wine);font-weight:600;cursor:pointer;padding:0;text-align:left;font-size:15px}
+@media(max-width:960px){.profs{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.profs{grid-template-columns:1fr}}
+.section-head{max-width:720px}
+.section-head h2{font-size:clamp(30px,4vw,44px);margin:10px 0 14px;letter-spacing:-.01em}
+
+/* simulator */
+.sim{background:var(--navy);color:#f1ece2}
+@media (prefers-color-scheme: dark){.sim{background:#0d1017}}
+.sim .eyebrow{color:var(--gold)}
+.sim .grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;margin-top:36px}
+.sim label{display:block;font-size:14px;color:#c9cbd6;margin:18px 0 8px}
+.seg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.seg button{border:1px solid #3a4256;background:transparent;color:#f1ece2;border-radius:4px;padding:11px 8px;cursor:pointer;font-size:15px}
+.seg button[aria-pressed="true"]{background:#f1ece2;color:#1d2433;border-color:#f1ece2;font-weight:600}
+.range{display:flex;align-items:center;gap:14px}
+.range input{flex:1;accent-color:var(--gold)}
+.range output{font-family:Fraunces,serif;font-size:20px;min-width:110px;text-align:right}
+.result{background:#262e42;border-radius:6px;padding:28px}
+@media (prefers-color-scheme: dark){.result{background:#1a1f2c}}
+.big{font-family:Fraunces,serif;font-size:clamp(40px,6vw,58px);color:#f0b3a5;line-height:1}
+.bars{margin:24px 0 8px}
+.bar{display:grid;grid-template-columns:150px 1fr 90px;gap:12px;align-items:center;font-size:14px;margin:10px 0}
+.bar .track{height:14px;background:#3a4256;border-radius:2px;overflow:hidden}
+.bar .fill{height:100%;transition:width .4s ease}
+.bar .v{text-align:right;font-variant-numeric:tabular-nums}
+.timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:22px}
+.timeline div{border-top:3px solid #3a4256;padding-top:10px;font-size:13px;color:#c9cbd6}
+.timeline b{display:block;color:#f1ece2;font-size:15px}
+.note{font-size:12.5px;color:#9aa0b3;margin-top:18px}
+.sim .btn{background:var(--gold);color:#1d2433;margin-top:22px}
+@media(max-width:860px){.sim .grid{grid-template-columns:1fr}.bar{grid-template-columns:110px 1fr 80px}}
+
+/* about */
+.about .grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;align-items:start}
+.about blockquote{font-family:Fraunces,serif;font-size:26px;line-height:1.3;margin:0 0 24px;color:var(--ink)}
+.cv{list-style:none;padding:0;margin:24px 0 0;border-left:2px solid var(--line)}
+.cv li{padding:0 0 18px 22px;position:relative}
+.cv li::before{content:"";position:absolute;left:-7px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--paper);border:2px solid var(--wine)}
+.cv b{display:block}
+.cv span{color:var(--muted);font-size:15px}
+@media(max-width:860px){.about .grid{grid-template-columns:1fr}}
+
+/* method */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:40px;border-top:1px solid var(--line)}
+.step{padding:26px 22px 0 0}
+.step .n{font-family:Fraunces,serif;font-size:42px;color:var(--wine)}
+.step h3{font-size:20px;margin:6px 0 8px}
+.step p{font-size:15px;color:var(--muted);margin:0}
+@media(max-width:860px){.steps{grid-template-columns:1fr 1fr;gap:10px}}
+
+/* webinar + forms */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:36px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+@media(max-width:860px){.two{grid-template-columns:1fr}}
+form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){form .row{grid-template-columns:1fr}}
+form label{display:block;font-size:14px;font-weight:500;margin:14px 0 6px}
+form input,form select{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:4px;background:var(--paper);color:var(--ink);font:inherit;font-size:16px}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted);margin:16px 0}
+.consent input{width:auto;margin-top:4px}
+.ok{display:none;background:color-mix(in srgb,var(--ok) 12%,transparent);border-left:3px solid var(--ok);padding:14px 16px;margin-top:16px;font-size:15px}
+
+/* faq */
+details{border-bottom:1px solid var(--line);padding:20px 0}
+summary{cursor:pointer;font-family:Fraunces,serif;font-size:21px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--wine);font-size:26px;line-height:1}
+details[open] summary::after{content:"–"}
+details p{color:var(--muted);margin:12px 0 0;max-width:760px}
+
+
+/* annonce */
+.announce{background:var(--wine);color:#fff;font-size:14.5px;text-align:center;padding:9px 16px}
+.announce a{color:#fff;font-weight:600}
+.announce .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ffd36b;margin-right:8px;animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.25}}
+/* repères */
+.facts{background:var(--navy);color:#f1ece2;padding:44px 0}
+@media (prefers-color-scheme: dark){.facts{background:#0d1017}}
+.facts .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.facts b{display:block;font-family:Fraunces,serif;font-size:clamp(34px,4.5vw,48px);color:var(--gold);line-height:1.05}
+.facts span{font-size:14.5px;color:#c9cbd6}
+@media(max-width:860px){.facts .grid{grid-template-columns:1fr 1fr}}
+/* webinaires */
+.wgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:36px}
+.wcard{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px;display:flex;flex-direction:column;position:relative}
+.wcard.next{border:2px solid var(--wine)}
+.wcard .badge{position:absolute;top:-11px;left:16px;background:var(--wine);color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:3px}
+.wcard .date{font-family:Fraunces,serif;font-size:22px}
+.wcard .time{font-size:13.5px;color:var(--muted)}
+.wcard .for{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:14px 0 4px}
+.wcard h3{font-family:Inter,sans-serif;font-size:16px;font-weight:600;line-height:1.35;flex:1}
+.wcard button{margin-top:14px;border:1.5px solid var(--ink);background:none;color:var(--ink);border-radius:4px;padding:9px;font-weight:600;cursor:pointer}
+.wcard.next button{background:var(--wine);border-color:var(--wine);color:#fff}
+@media(max-width:960px){.wgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.wgrid{grid-template-columns:1fr}}
+.countdown{display:flex;gap:10px;margin:18px 0 0}
+.countdown div{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:8px 12px;text-align:center;min-width:64px}
+.countdown b{display:block;font-family:Fraunces,serif;font-size:26px}
+.countdown span{font-size:12px;color:var(--muted)}
+/* erreurs */
+.errs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px}
+.err{border-top:3px solid var(--wine);padding-top:18px}
+.err h3{font-size:21px;margin:0 0 8px}
+.err p{color:var(--muted);font-size:15.5px;margin:0}
+@media(max-width:860px){.errs{grid-template-columns:1fr}}
+
+footer{background:var(--navy);color:#c9cbd6;padding:56px 0 40px;font-size:14px}
+@media (prefers-color-scheme: dark){footer{background:#0d1017}}
+footer .grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:32px}
+footer h4{color:#f1ece2;font-family:Fraunces,serif;font-size:18px;margin:0 0 10px;font-weight:600}
+footer p{margin:6px 0}
+footer .legal{border-top:1px solid #333b50;margin-top:36px;padding-top:20px;font-size:12.5px;color:#8f95a8}
+@media(max-width:860px){footer .grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="announce"><span class="dot"></span>Webinaire en direct chaque semaine · Prochaine session : <b id="annDate">—</b> · <a href="#webinaires">Réserver ma place →</a></div>
+<header class="top">
+  <div class="wrap">
+    <a href="#" class="logo">Le Revenu <span>du Droit</span></a>
+    <nav class="main">
+      <a href="#metiers">Votre métier</a>
+      <a href="#simulateur">Simulateur</a>
+      <a href="#laurie">Qui suis-je</a>
+      <a href="#webinaires">Webinaires</a>
+      <a href="#methode">Méthode</a>
+      <a href="#faq">Questions</a>
+    </nav>
+    <a href="#rdv" class="btn" style="padding:10px 16px;font-size:15px">Prendre rendez-vous</a>
+  </div>
+</header>
+
+<main>
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap grid">
+    <div>
+      <div class="eyebrow">La prévoyance des professions du droit et du chiffre</div>
+      <h1>Vous protégez les intérêts de vos clients. <em>Qui protège vos revenus&nbsp;?</em></h1>
+      <p class="lead">Avocat, notaire, commissaire de justice, expert-comptable : en cas d'arrêt de travail, votre caisse ne verse qu'une fraction de vos revenus. Pendant ce temps, les charges du cabinet continuent. Chiffrez votre manque en 2 minutes.</p>
+      <div class="ctas">
+        <a href="#simulateur" class="btn">Calculer mon manque de couverture →</a>
+        <a href="#rdv" class="btn ghost">Parler à Laurie</a>
+      </div>
+      <div class="proof">
+        <div><b>6 ans</b>avocate d'affaires</div>
+        <div><b>Depuis 2007</b>conseil patrimonial</div>
+        <div><b>Indépendante</b>plusieurs assureurs comparés</div>
+      </div>
+    </div>
+    <aside class="portrait" aria-label="Laurie Mouyen">
+      <div class="avatar" aria-hidden="true">LM</div>
+      <h3>Laurie Mouyen</h3>
+      <div class="muted">Ancienne avocate · Courtière en assurance · Bordeaux</div>
+      <ul>
+        <li>CAPA (1998), avocate chez Fidal et Fiducial Sofiral</li>
+        <li>DES de gestion de patrimoine de l'AUREP</li>
+        <li>Rendez-vous à Bordeaux ou en visio partout en France</li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<!-- REPERES -->
+<section class="facts" aria-label="Repères 2026">
+  <div class="wrap grid">
+    <div><b>3 jours</b><span>sans aucune indemnité au début de chaque arrêt</span></div>
+    <div><b>197 €/jour</b><span>au maximum versés par l'Assurance maladie, quel que soit votre revenu</span></div>
+    <div><b>90 jours</b><span>après quoi votre caisse professionnelle prend le relais, souvent avec un forfait</span></div>
+    <div><b>0 €</b><span>pour les charges du cabinet, qu'aucun régime obligatoire ne couvre</span></div>
+  </div>
+</section>
+
+<!-- ERREURS -->
+<section style="padding-bottom:40px">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Ce que je vois en rendez-vous</div>
+      <h2>Trois erreurs qui coûtent très cher, et qu'on retrouve partout.</h2>
+    </div>
+    <div class="errs">
+      <div class="err"><h3>Une franchise de 90 jours</h3><p>Choisie pour baisser la cotisation, elle laisse trois mois sans rien, pile au moment où la trésorerie du cabinet souffre le plus.</p></div>
+      <div class="err"><h3>Une invalidité « fonctionnelle »</h3><p>Le contrat ne vous indemnise que selon un barème médical général, pas selon votre capacité à exercer votre métier. Pour un professionnel du droit, la différence est énorme.</p></div>
+      <div class="err"><h3>Les frais généraux oubliés</h3><p>Loyer, salariés, emprunt des parts : ils continuent pendant l'arrêt. Une garantie « frais professionnels » existe, encore faut-il la prévoir.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- METIERS -->
+<section id="metiers" style="padding-top:24px">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Votre métier</div>
+      <h2>Chaque profession a sa caisse. Chacune laisse un trou.</h2>
+      <p class="muted">Du 4ᵉ au 90ᵉ jour d'arrêt, l'Assurance maladie verse des indemnités plafonnées. Ensuite, c'est votre caisse professionnelle qui prend le relais, et c'est là que tout se joue.</p>
+    </div>
+    <div class="profs" id="profCards"></div>
+  </div>
+</section>
+
+<!-- SIMULATEUR -->
+<section id="simulateur" class="sim">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Simulateur</div>
+      <h2>Combien toucheriez-vous vraiment pendant un arrêt&nbsp;?</h2>
+      <p style="color:#c9cbd6">Une estimation en quelques secondes, à partir des barèmes de votre régime obligatoire.</p>
+    </div>
+    <div class="grid">
+      <div>
+        <label>Votre profession</label>
+        <div class="seg" id="simProf"></div>
+        <label for="rev">Revenu professionnel net mensuel</label>
+        <div class="range"><input type="range" id="rev" min="2000" max="20000" step="250" value="6000"><output id="revOut"></output></div>
+        <label for="chg">Charges du cabinet qui continuent (loyer, salariés, emprunt)</label>
+        <div class="range"><input type="range" id="chg" min="0" max="15000" step="250" value="2500"><output id="chgOut"></output></div>
+        <label>Durée de l'arrêt</label>
+        <div class="seg" id="simDur" style="grid-template-columns:repeat(4,1fr)"></div>
+      </div>
+      <div class="result" aria-live="polite">
+        <div style="font-size:14px;color:#c9cbd6">Ce qui vous manquerait sur la période</div>
+        <div class="big" id="gap">—</div>
+        <div class="bars">
+          <div class="bar"><span>Vos besoins</span><div class="track"><div class="fill" id="bNeed" style="background:#f1ece2"></div></div><span class="v" id="vNeed"></span></div>
+          <div class="bar"><span>Versé par les régimes</span><div class="track"><div class="fill" id="bPaid" style="background:var(--gold)"></div></div><span class="v" id="vPaid"></span></div>
+        </div>
+        <div class="timeline" id="tl"></div>
+        <a href="#rdv" class="btn" id="simCta">Faire mon vrai diagnostic avec Laurie →</a>
+        <p class="note" id="simNote"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LAURIE -->
+<section id="laurie" class="about">
+  <div class="wrap grid">
+    <div>
+      <div class="eyebrow">Qui suis-je</div>
+      <h2 style="font-size:clamp(30px,4vw,44px);margin:10px 0 0">J'ai porté la robe avant de conseiller ceux qui la portent.</h2>
+    </div>
+    <div>
+      <blockquote>« Vous passez vos journées à sécuriser la situation des autres. Je vous aide à sécuriser la vôtre, avec des chiffres, pas des généralités. »</blockquote>
+      <p class="muted">Après des études de droit des affaires et de fiscalité à Bordeaux, j'ai exercé six ans comme avocate. En travaillant avec un gestionnaire de patrimoine sur un dossier, j'ai découvert le métier que je voulais vraiment faire. Depuis 2007, j'accompagne des chefs d'entreprise et des professionnels libéraux dans l'organisation et la protection de leur patrimoine.</p>
+      <p class="muted">Je connais vos contraintes de l'intérieur : la collaboration, l'association, les charges du cabinet, la trésorerie qui ne pardonne pas un arrêt de plusieurs mois.</p>
+      <ul class="cv">
+        <li><b>Depuis 2007 · Conseillère en gestion de patrimoine</b><span>Fondatrice de cabinets à Bordeaux, courtière en assurance</span></li>
+        <li><b>2005 – 2007 · Responsable juridique</b><span>Service juridique d'un cabinet de conseil</span></li>
+        <li><b>1999 – 2005 · Avocate en droit des affaires et fiscalité</b><span>Fidal, Fiducial Sofiral Avocats et cabinets bordelais</span></li>
+        <li><b>Formation</b><span>DESS droit des affaires et fiscalité (Bordeaux IV), CAPA, DES de gestion de patrimoine de l'AUREP</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- WEBINAIRES -->
+<section id="webinaires" style="background:var(--soft)">
+  <div class="wrap">
+    <div class="two" style="align-items:end">
+      <div class="section-head">
+        <div class="eyebrow">Webinaires · chaque semaine</div>
+        <h2>Un webinaire en direct chaque semaine, par métier et par sujet.</h2>
+        <p class="muted">30 minutes, gratuites, en ligne. Une question précise, des chiffres, et vos questions en direct. Le replay est envoyé à tous les inscrits.</p>
+      </div>
+      <div>
+        <div style="font-size:14px;color:var(--muted)">Prochaine session dans</div>
+        <div class="countdown" id="cd"></div>
+      </div>
+    </div>
+    <div class="wgrid" id="wgrid"></div>
+  </div>
+</section>
+
+<!-- METHODE -->
+<section id="methode" style="background:var(--soft)">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">La méthode</div>
+      <h2>Quatre étapes, et vous ne remplissez rien deux fois.</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Le diagnostic</h3><p>Vous chiffrez votre manque en ligne. Vos informations sont transmises avant notre échange.</p></div>
+      <div class="step"><div class="n">2</div><h3>L'analyse</h3><p>J'étudie votre contrat actuel s'il existe : franchise, garanties, exclusions, définition de l'invalidité.</p></div>
+      <div class="step"><div class="n">3</div><h3>Trois propositions</h3><p>Je compare plusieurs assureurs et vous présente trois solutions adaptées, avec mon conseil écrit.</p></div>
+      <div class="step"><div class="n">4</div><h3>La signature</h3><p>Vous signez en ligne. Je reste votre interlocutrice pendant toute la vie du contrat.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- WEBINAIRE + RDV -->
+<section id="rdv">
+  <div class="wrap two">
+    <div class="panel" id="inscription">
+      <div class="eyebrow">Webinaire</div>
+      <h2 style="font-size:30px;margin:10px 0 12px">Réservez votre place au prochain webinaire</h2>
+      <p class="muted">30 minutes en ligne pour comprendre votre régime, les pièges des contrats et les bons réflexes fiscaux. Choisissez votre session.</p>
+      <form data-kind="webinaire">
+        <div class="row">
+          <div><label for="w-name">Prénom et nom</label><input id="w-name" name="nom" required autocomplete="name"></div>
+          <div><label for="w-mail">E-mail professionnel</label><input id="w-mail" name="email" type="email" required autocomplete="email"></div>
+        </div>
+        <div class="row">
+          <div><label for="w-prof">Profession</label><select id="w-prof" name="profession" required></select></div>
+          <div><label for="w-sess">Session</label><select id="w-sess" name="session" required></select></div>
+        </div>
+        <label class="consent"><input type="checkbox" required> J'accepte que mes données soient utilisées pour m'inscrire au webinaire et recevoir des informations sur la prévoyance. Je peux me désinscrire à tout moment.</label>
+        <button class="btn" type="submit">Je m'inscris</button>
+        <div class="ok">C'est noté ! Vous allez recevoir le lien par e-mail.</div>
+      </form>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">Rendez-vous</div>
+      <h2 style="font-size:30px;margin:10px 0 12px">Parlons de votre situation</h2>
+      <p class="muted">30 minutes, en visio ou à Bordeaux. Sans engagement.</p>
+      <form data-kind="rendez-vous">
+        <div class="row">
+          <div><label for="r-name">Prénom et nom</label><input id="r-name" name="nom" required autocomplete="name"></div>
+          <div><label for="r-tel">Téléphone</label><input id="r-tel" name="telephone" type="tel" autocomplete="tel"></div>
+        </div>
+        <label for="r-mail">E-mail professionnel</label><input id="r-mail" name="email" type="email" required autocomplete="email">
+        <div class="row">
+          <div><label for="r-prof">Profession</label><select id="r-prof" name="profession" required></select></div>
+          <div><label for="r-mode">Mode d'exercice</label>
+            <select id="r-mode" name="exercice"><option>Libéral individuel</option><option>Associé (SEL, SCP…)</option><option>Collaborateur libéral</option><option>Salarié</option></select></div>
+        </div>
+        <label class="consent"><input type="checkbox" required> J'accepte que mes données soient utilisées pour être recontacté(e) au sujet de ma demande. Aucune donnée de santé n'est demandée sur ce site.</label>
+        <button class="btn" type="submit">Être rappelé(e)</button>
+        <div class="ok">Merci ! Laurie revient vers vous sous 24 heures ouvrées.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="padding-top:24px">
+  <div class="wrap">
+    <div class="section-head"><div class="eyebrow">Questions fréquentes</div><h2>Ce qu'on me demande le plus souvent</h2></div>
+    <div id="faqList" style="margin-top:20px"></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <h4>Le Revenu du Droit</h4>
+        <p>La prévoyance des professions du droit et du chiffre, par Laurie Mouyen, ancienne avocate.</p>
+        <p>Bordeaux et partout en France en visio.</p>
+      </div>
+      <div>
+        <h4>Votre métier</h4>
+        <p><a href="#metiers">Prévoyance avocat</a></p>
+        <p><a href="#metiers">Prévoyance notaire</a></p>
+        <p><a href="#metiers">Prévoyance commissaire de justice</a></p>
+        <p><a href="#metiers">Prévoyance expert-comptable</a></p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p><a href="#rdv">Prendre rendez-vous</a></p>
+        <p><a href="#rdv">Webinaire hebdomadaire</a></p>
+      </div>
+    </div>
+    <div class="legal">
+      Laurie Mouyen, courtière en assurance, immatriculée à l'ORIAS sous le n° <span class="placeholder">[à compléter]</span> (www.orias.fr), SIRET <span class="placeholder">[à compléter]</span>. Activité soumise au contrôle de l'ACPR, 4 place de Budapest, CS 92459, 75436 Paris Cedex 09.
+      Réclamations : <span class="placeholder">[adresse e-mail]</span>. Médiateur : <span class="placeholder">[à compléter]</span>.
+      Liste des assureurs partenaires sur demande. Les simulations sont indicatives et non contractuelles ; seule une étude personnalisée permet d'établir vos besoins.
+      · <a href="#">Mentions légales</a> · <a href="#">Politique de confidentialité</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ==================================================================
+   CONFIGURATION — barèmes et contenus.
+   Les montants des caisses sont des ordres de grandeur 2026 à vérifier
+   auprès de chaque caisse avant la mise en ligne.
+   ================================================================== */
+const CONFIG = {
+  formEndpoint: "",            // URL qui reçoit les formulaires (Formspree, Make…). Vide = démo.
+  cpamMaxPerDay: 197.51,       // IJ Assurance maladie J4–J90, plafond 3 PASS / 730 (2026, à vérifier)
+  professions: [
+    { id:"avocat", label:"Avocat", tag:"CNBF · LPA", caisse:"la CNBF et la LPA",
+      perDayAfter90: 90, // à vérifier : IJ CNBF / LPA versées du 91e au 1095e jour
+      fact:"≈ 90 €/jour à partir du 91ᵉ jour",
+      text:"Collaborateur ou associé, la CNBF et la LPA versent un forfait identique quel que soit votre chiffre d'affaires. Les frais du cabinet, eux, ne s'arrêtent pas." },
+    { id:"notaire", label:"Notaire", tag:"CPRN", caisse:"la CPRN",
+      perDayAfter90: 0, // à vérifier : pas d'IJ CPRN au-delà de 90 jours
+      fact:"0 € d'indemnité au-delà du 90ᵉ jour",
+      text:"Au-delà de trois mois d'arrêt, la CPRN ne verse plus d'indemnités journalières. L'étude, les collaborateurs et l'emprunt des parts restent à financer." },
+    { id:"cj", label:"Commissaire de justice", tag:"CAVOM", caisse:"la CAVOM",
+      perDayAfter90: null, // à compléter : barème CAVOM à confirmer
+      fact:"Barème CAVOM à étudier au cas par cas",
+      text:"Les actes et les délais de procédure n'attendent pas. Vérifiez ce que la CAVOM verse vraiment en cas d'arrêt long ou d'invalidité." },
+    { id:"ec", label:"Expert-comptable", tag:"CAVEC", caisse:"la CAVEC",
+      perDayAfter90: 130, // à vérifier : IJ CAVEC à partir du 91e jour
+      fact:"≈ 130 €/jour à partir du 91ᵉ jour",
+      text:"Le forfait de la CAVEC ne dépend pas de votre revenu. En pleine période fiscale, un arrêt peut coûter très cher au cabinet." },
+  ],
+  durations:[30,90,180,365],
+  // Webinaires : jour de la semaine (1 = lundi … 4 = jeudi) et heure. À confirmer avec Laurie.
+  webinar:{ weekday:4, hour:12, minute:30, weeks:8 },
+  // Thèmes qui tournent d'une semaine à l'autre
+  webinarTopics:[
+    {for:"Avocats", title:"Arrêt de travail : ce que la CNBF et la LPA vous versent vraiment"},
+    {for:"Notaires", title:"Après 90 jours, la CPRN ne verse plus rien : comment s'organiser"},
+    {for:"Experts-comptables", title:"Prévoyance et période fiscale : protéger le cabinet en haute saison"},
+    {for:"Commissaires de justice", title:"CAVOM, invalidité, frais de l'étude : les angles morts"},
+    {for:"Tous métiers", title:"Contrat Madelin : déduire ses cotisations sans se tromper"},
+    {for:"Collaborateurs libéraux", title:"Collaborateur : pourquoi vous êtes le plus exposé du cabinet"},
+    {for:"Associés", title:"Associé de SEL : protéger vos revenus et le rachat de vos parts"},
+    {for:"Tous métiers", title:"Invalidité professionnelle ou fonctionnelle : la clause qui change tout"},
+  ],
+  faq:[
+    ["La prévoyance de mon ordre ou de ma caisse ne suffit-elle pas ?","Elle constitue un socle, mais elle verse le plus souvent un forfait sans lien avec vos revenus réels, et rien pour les charges du cabinet. Le diagnostic chiffre l'écart entre ce socle et vos besoins."],
+    ["Mes cotisations sont-elles déductibles ?","Pour un professionnel libéral, les cotisations d'un contrat de prévoyance « Madelin » sont en principe déductibles du bénéfice imposable, dans certaines limites. Nous vérifions ensemble ce qui s'applique à votre situation."],
+    ["Que se passe-t-il si je suis collaborateur libéral ?","Vous êtes travailleur indépendant : votre couverture dépend de votre caisse et de votre éventuel contrat individuel, pas de celui du cabinet. C'est souvent la situation la plus exposée."],
+    ["Dois-je remplir un questionnaire de santé sur ce site ?","Non. Ce site ne collecte aucune donnée de santé. Le questionnaire médical éventuel est rempli directement auprès de l'assureur, au moment de la souscription."],
+    ["Combien coûte votre accompagnement ?","Le diagnostic et le premier rendez-vous sont sans engagement. Je suis rémunérée par les assureurs sur les contrats souscrits ; la nature de ma rémunération vous est indiquée avant toute souscription."],
+  ],
+};
+
+const $=s=>document.querySelector(s);
+const eur=n=>new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(Math.round(n));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* cartes métiers */
+$("#profCards").innerHTML=CONFIG.professions.map(p=>`<article class="prof"><div class="tag">${esc(p.tag)}</div><h3>Prévoyance ${esc(p.label.toLowerCase())}</h3><p>${esc(p.text)}</p><div class="fact">${esc(p.fact)}</div><button data-p="${p.id}">Simuler mon cas →</button></article>`).join("");
+$("#profCards").addEventListener("click",e=>{const b=e.target.closest("button[data-p]");if(!b)return;setProf(b.dataset.p);$("#simulateur").scrollIntoView({behavior:"smooth"});});
+
+/* selects des formulaires */
+document.querySelectorAll('select[name="profession"]').forEach(s=>s.innerHTML='<option value="">Choisir…</option>'+CONFIG.professions.map(p=>`<option>${esc(p.label)}</option>`).join("")+'<option>Autre profession libérale</option>');
+
+/* simulateur */
+let prof="avocat", days=90;
+$("#simProf").innerHTML=CONFIG.professions.map(p=>`<button type="button" data-p="${p.id}">${esc(p.label)}</button>`).join("");
+$("#simDur").innerHTML=CONFIG.durations.map(d=>`<button type="button" data-d="${d}">${d<365?d+" j":"1 an"}</button>`).join("");
+$("#simProf").onclick=e=>{const b=e.target.closest("button");if(b)setProf(b.dataset.p);};
+$("#simDur").onclick=e=>{const b=e.target.closest("button");if(b){days=+b.dataset.d;calc();}};
+["rev","chg"].forEach(id=>$("#"+id).addEventListener("input",calc));
+function setProf(id){prof=id;calc();}
+function calc(){
+  const p=CONFIG.professions.find(x=>x.id===prof), rev=+$("#rev").value, chg=+$("#chg").value;
+  document.querySelectorAll("#simProf button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.p===prof));
+  document.querySelectorAll("#simDur button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.d===days));
+  $("#revOut").textContent=eur(rev); $("#chgOut").textContent=eur(chg);
+  const cpamDay=Math.min(rev*12/730,CONFIG.cpamMaxPerDay);
+  const d1=Math.min(days,3), d2=Math.max(0,Math.min(days,90)-3), d3=Math.max(0,days-90);
+  const after=p.perDayAfter90??0;
+  const paid=d2*cpamDay+d3*after;
+  const need=(rev+chg)*days/30;
+  const gap=Math.max(0,need-paid);
+  $("#gap").textContent=eur(gap);
+  $("#vNeed").textContent=eur(need); $("#vPaid").textContent=eur(paid);
+  $("#bNeed").style.width="100%"; $("#bPaid").style.width=(need?Math.min(100,paid/need*100):0)+"%";
+  $("#tl").innerHTML=`<div><b>J1 → J3</b>0 €/jour<br>carence</div><div><b>J4 → J90</b>${eur(cpamDay)}/jour<br>Assurance maladie</div><div><b>J91 et +</b>${p.perDayAfter90==null?"à étudier":eur(after)+"/jour"}<br>${esc(p.caisse)}</div>`;
+  $("#simNote").textContent=(p.perDayAfter90==null?`Le barème de ${p.caisse} n'est pas intégré : au-delà de 90 jours, le calcul ne compte aucun versement. `:"")+"Estimation indicative et non contractuelle, sur la base des barèmes 2026 de l'Assurance maladie et des caisses professionnelles. Indemnités journalières calculées sur 1/730 du revenu annuel, dans la limite du plafond. Seule une étude personnalisée permet d'établir vos besoins réels.";
+  window._sim={profession:p.label,revenu:rev,charges:chg,jours:days,manque:Math.round(gap)};
+}
+calc();
+
+
+/* webinaires : sessions calculées automatiquement chaque semaine */
+const W=CONFIG.webinar, fmtD=new Intl.DateTimeFormat("fr-FR",{weekday:"long",day:"numeric",month:"long"}), fmtS=new Intl.DateTimeFormat("fr-FR",{weekday:"short",day:"numeric",month:"short"});
+function sessions(){
+  const now=new Date(), d=new Date(now); d.setHours(W.hour,W.minute,0,0);
+  const js=(W.weekday%7); let add=(js-d.getDay()+7)%7; if(add===0&&d<=now) add=7; d.setDate(d.getDate()+add);
+  const weekIndex=Math.floor(d.getTime()/604800000);
+  return Array.from({length:W.weeks},(_,i)=>{const x=new Date(d);x.setDate(d.getDate()+7*i);return {date:x,topic:CONFIG.webinarTopics[(weekIndex+i)%CONFIG.webinarTopics.length]};});
+}
+const SESS=sessions(), hh=`${String(W.hour).padStart(2,"0")}h${String(W.minute).padStart(2,"0")}`;
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+$("#annDate").textContent=`${fmtD.format(SESS[0].date)} à ${hh}`;
+$("#wgrid").innerHTML=SESS.map((x,i)=>`<article class="wcard${i===0?" next":""}">${i===0?'<span class="badge">Prochaine session</span>':""}<div class="date">${cap(fmtS.format(x.date))}</div><div class="time">${hh} · 30 min · en ligne</div><div class="for">${esc(x.topic.for)}</div><h3>${esc(x.topic.title)}</h3><button data-i="${i}">Je réserve ma place</button></article>`).join("");
+$("#w-sess").innerHTML=SESS.map((x,i)=>`<option value="${i}">${cap(fmtS.format(x.date))} · ${esc(x.topic.title)}</option>`).join("");
+$("#wgrid").addEventListener("click",e=>{const b=e.target.closest("button[data-i]");if(!b)return;$("#w-sess").value=b.dataset.i;$("#inscription").scrollIntoView({behavior:"smooth",block:"center"});});
+function tick(){let ms=Math.max(0,SESS[0].date-new Date());const d=Math.floor(ms/864e5),h=Math.floor(ms/36e5)%24,m=Math.floor(ms/6e4)%60;
+  $("#cd").innerHTML=[[d,"jours"],[h,"heures"],[m,"minutes"]].map(([v,l])=>`<div><b>${v}</b><span>${l}</span></div>`).join("");}
+tick(); setInterval(tick,30000);
+
+/* FAQ */
+$("#faqList").innerHTML=CONFIG.faq.map(([q,a])=>`<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("");
+
+/* formulaires */
+document.querySelectorAll("form[data-kind]").forEach(f=>f.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const data=Object.fromEntries(new FormData(f)); data.type=f.dataset.kind; data.simulation=window._sim;
+  if(CONFIG.formEndpoint){try{await fetch(CONFIG.formEndpoint,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(data)});}catch{}}
+  f.querySelector(".ok").style.display="block"; f.querySelector("button[type=submit]").disabled=true;
+}));
+</script>
+</body>
+</html>
